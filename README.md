@@ -9,5 +9,5 @@ Sample snake game which we used to play in java mobile phones. Working on the sa
 
 2) curses2.py --- Using Curses to move the strings
 
-3) curses3.py --- Playing with the strings.
+3) curses3.py --- Playing with the strings
 
