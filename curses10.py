@@ -6,7 +6,7 @@ import curses
 import time
 screen = curses.initscr()
 curses.noecho()
-screen   .keypad(1)
+screen.keypad(1)
 dims = screen.getmaxyx()
 q = -1
 x,y =1,1

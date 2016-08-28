@@ -18,10 +18,16 @@ def game():
 	# 2: Left
 	# 3: Up
 	gameover = False
+	foodmade = False
 	deadcell = body[-1]
 	while not gameover:
 
 		#Getting Directions
+		while not foodmade:
+			y,x = random.randrange(1,dims[0]-1),random.randrange(1,dims[1] - 1)
+			if screen.inch(y,x) == ord(' '):
+				foodmade = True
+				screen.addch(y,x,'#')
 		action = screen.getch()
 		if action == curses.KEY_UP and direction != 1:
 			direction = 3
@@ -56,10 +62,14 @@ def game():
 		body[0] = head[:]
 
 		if screen.inch(head[0],head[1]) != ord(' '):
-			gameover = True
+			if screen.inch(head[0],head[1]) == ord('#'):
+				foodmade = False
+				body.append(body[-1])
+			else:
+				gameover = True
 		screen.move(dims[0]-1,dims[1]-1)
 		screen.refresh()
-		time.sleep(0.2)
+		time.sleep(0.1)
 
 game()
 curses.endwin()
