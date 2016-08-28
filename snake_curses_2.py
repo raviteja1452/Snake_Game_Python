@@ -12,6 +12,7 @@ screen = curses.initscr()
 screen.keypad(1)
 dims = screen.getmaxyx()
 def game():
+	screen.clear()
 	screen.nodelay(1)
 	head = [1,1]
 	body = [head[:]]*startlength
@@ -87,19 +88,93 @@ def game():
 	message2 = 'You got '+str((len(body)-startlength)/growlength)+' points'
 	message3 = 'Press Space to play again'
 	message4 = 'Press Enter to Quit'
-	screen.addstr(dims[0]/2-1,(dims[1]-len(message1))/2,message1)
-	screen.addstr(dims[0]/2,(dims[1]-len(message2))/2,message2)
-	screen.addstr(dims[0]/2+1,(dims[1]-len(message3))/2,message3)
-	screen.addstr(dims[0]/2+2,(dims[1]-len(message4))/2,message4)
+	message5 = 'Press M to go the menu'
+	screen.addstr(dims[0]/2-2,(dims[1]-len(message1))/2,message1)
+	screen.addstr(dims[0]/2-1,(dims[1]-len(message2))/2,message2)
+	screen.addstr(dims[0]/2,(dims[1]-len(message3))/2,message3)
+	screen.addstr(dims[0]/2+1,(dims[1]-len(message4))/2,message4)
+	screen.addstr(dims[0]/2+2,(dims[1]-len(message5))/2,message5)
 	screen.refresh()
 	q = 0
-	while q not in [32,10]:
+	while q not in [32,10,77,109]:
 		q = screen.getch()
 		if q == 32:
-			screen.clear()
 			game()
+		elif q in [77,109]:
+			menu()	
 
-game()
+
+def instructions():
+	screen.clear()
+	screen.nodelay(0)
+	lines= ['Use the arrow keys to move','Don\'t run into the wall or the snake','','Press any key to go back']
+	for z in range(len(lines)):
+		screen.addstr((dims[0]-len(lines))/2+z,(dims[1]-len(lines[z]))/2,lines[z])
+	screen.refresh()
+	screen.getch()
+	menu()
+
+def gameoptions():
+	global startlength,growlength,difficulty,acceleration
+	screen.clear()
+	selection = -1
+	option = 0
+	while selection < 4:
+		screen.clear()
+		graphics = [0]*5
+		graphics[option] = curses.A_BOLD
+		strings = ['Starting snake length: '+str(startlength),'Snake Growth rate: '+str(growlength),'Difficulty: '+difficulty,'Acceleration: '+str(acceleration),'Exit']
+		for z in range(len(strings)):
+			screen.addstr((dims[0]-len(strings))/2+z,(dims[1]-len(strings[z]))/2,strings[z],graphics[z])
+		screen.refresh()
+		action = screen.getch()
+		if action == curses.KEY_UP:
+			option = (option - 1)%5
+		elif action == curses.KEY_DOWN:
+			option = (option + 1) %5
+		elif action == ord('\n'):
+			selection = option
+		if selection == 3:
+			acceleration = not acceleration
+		if selection < 4:
+			selection = -1
+	menu()
+	
+
+def menu():
+	screen.clear()
+	screen.nodelay(0)
+	selection = -1
+	option = 0
+	while(selection < 0):
+		graphics = [0]*5
+		graphics[option] = curses.A_REVERSE
+		screen.addstr(0,dims[1]/2-3,'Snake')
+		screen.addstr(dims[0]/2-2,dims[1]/2-2,'Play',graphics[0])
+		screen.addstr(dims[0]/2-1,dims[1]/2-6,'Instructions',graphics[1])
+		screen.addstr(dims[0]/2,dims[1]/2-6,'Game Options',graphics[2])
+		screen.addstr(dims[0]/2+1,dims[1]/2-5,'High Scores',graphics[3])
+		screen.addstr(dims[0]/2+2,dims[1]/2-2,'Exit',graphics[4])
+		screen.refresh()
+		action = screen.getch()
+		if action == curses.KEY_UP:
+			option = (option - 1)%5
+		elif action == curses.KEY_DOWN:
+			option = (option + 1) %5
+		elif action == ord('\n'):
+			selection = option
+	screen.clear()
+	if selection == 0:
+		game()
+	elif selection == 1:
+		instructions()
+	elif selection == 2:
+		gameoptions()
+
+
+
+
+menu()
 curses.endwin()
 
 
